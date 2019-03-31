@@ -152,6 +152,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Deimos.cpp" />
+    <ClCompile Include="ParaReader.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ParaReader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

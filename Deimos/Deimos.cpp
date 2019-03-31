@@ -4,6 +4,9 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include "ParaReader.h"
+
+#define ulong unsigned long
 
 char const hex[16] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',   'B','C','D','E','F'};
 
@@ -15,6 +18,32 @@ std::string byte_2_str(char byte)
 	return str;
 } 
 
+void PrintBytes(std::ifstream* stream, ulong start, ulong sz)
+{
+
+	std::vector<char> bytes(sz); 
+	stream->seekg(start, std::ios::beg);
+	stream->read(&bytes[0],sz);
+
+	int i = 0;
+	for (auto b : bytes)
+	{
+		std::cout << byte_2_str(b) << " ";
+		i++;
+		if (i % 16 == 0)
+			std::cout << std::endl;
+	}
+}
+
+class zParaReader
+{
+	public:
+		bool HasFlag(const std::string& flag)
+		{
+
+		}
+};
+
 int main(int argc, char* argv[])
 {
 	if (argc < 2)
@@ -23,12 +52,19 @@ int main(int argc, char* argv[])
 		return 0; 
 	}
 
+	const char* params[] = { "-test", "hest", "-fest","123"};
+	auto reader = ParaReader::FromString(3,params);
+	auto h = reader.GetValue("-test");
+	auto w = reader.GetNumber("-fest");
+
+	auto start = argv[3]; 
 	auto stream = std::ifstream(argv[1], std::ios::binary | std::ios::ate);
 	auto pos = stream.tellg();
 	int length = pos;
 
-	std::vector<char> bytes(pos);
+	PrintBytes(&stream, 0, length);
 
+	std::vector<char> bytes(pos); 
 	stream.seekg(0, std::ios::beg);
 	stream.read(&bytes[0],length);
 
