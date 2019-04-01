@@ -16,7 +16,7 @@ bool IsFlag(const std::string& arg)
 	return arg.find('-') == 0;
 }
 
-ParaReader ParaReader::FromString(const int argc, const char* argv[])
+ParaReader ParaReader::FromString(const int argc, char* argv[])
 {
 	auto reader = ParaReader();
 	for (int i = 0; i < argc; i++)
@@ -44,6 +44,14 @@ std::string ParaReader::GetValue(const std::string& flag)
 int ParaReader::GetNumber(const std::string& flag)
 {
 	return std::stoi(GetValue(flag));
+}
+
+int ParaReader::GetNumberOrdefault(const std::string& flag, int def)
+{
+	if (_keyValues.find(flag) != _keyValues.end())
+		return std::stoi( _keyValues[flag] );
+
+	return def;
 }
 
 bool ParaReader::HasFlag(const std::string& flag)
