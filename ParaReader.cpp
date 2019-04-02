@@ -4,6 +4,7 @@
 ParaReader::ParaReader()
 {
 	_keyValues = std::map<std::string, std::string>();
+	_switches = std::vector<std::string>();
 }
 
 
@@ -23,11 +24,51 @@ ParaReader ParaReader::FromString(const int argc, char* argv[])
 	{ 
 		if (IsFlag(argv[i]))
 		{ 
-			reader.AddKeyValue(argv[i],argv[i+1]);
+			if (reader.HasSwitch(argv[i]))
+			{ 
+				reader.AddKeyValue(argv[i], "");
+			}
+			else
+				reader.AddKeyValue(argv[i],argv[i+1]);
 		}
 	}
 
 	return reader;
+}
+
+ParaReader ParaReader::FromStringWithSwitches(const int argc, char* argv[], std::vector<std::string> switches)
+{
+	auto reader = ParaReader();
+	for (auto sw : switches)
+		reader.AddSwitchWithName(sw);
+
+	for (int i = 0; i < argc; i++)
+	{ 
+		if (IsFlag(argv[i]))
+		{ 
+			if (reader.HasSwitch(argv[i]))
+			{ 
+				reader.AddKeyValue(argv[i], "");
+			}
+			else if(i+1 < argc)
+			{ 
+				reader.AddKeyValue(argv[i],argv[i+1]); 
+			}
+		}
+	}
+
+	return reader;
+
+}
+
+void ParaReader::AddSwitchWithName(const std::string& name)
+{
+	if (std::find(std::begin(_switches), std::end(_switches),name) != std::end(_switches))
+	{ 
+		return;
+	}
+
+	_switches.push_back(name);
 }
 
 
@@ -57,4 +98,9 @@ int ParaReader::GetNumberOrdefault(const std::string& flag, int def)
 bool ParaReader::HasFlag(const std::string& flag)
 {
 	return _keyValues.find(flag) != _keyValues.end();
-} 
+}
+bool ParaReader::HasSwitch(const std::string& flag)
+{
+	return std::find(std::begin(_switches), std::end(_switches), flag) != std::end(_switches);
+}
+

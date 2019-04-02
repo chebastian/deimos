@@ -100,13 +100,6 @@ void MakeUnicodeFile(const std::string& filename)
 	stream.close();
 }
 
-void iniTest()
-{
-	MakeUnicodeFile("C://Users//sefe//Source//Repos//Deimos//test.txt");
-	WritePrivateProfileString(L"app",L"key",L"ד ה ו ז ח ט י ך כ ל ם מ",L"C://Users//sefe//Source//Repos//Deimos//test.txt"); 
-
-	WritePrivateProfileString(L"app",L"key",L"ד ה ו ז ח ט י ך כ ל ם מ",L"C://Users//sefe//Source//Repos//Deimos//test.txt"); 
-}
 
 int main(int argc, char* argv[])
 {
@@ -116,7 +109,8 @@ int main(int argc, char* argv[])
 		return 0; 
 	}
 
-	auto reader = ParaReader::FromString(argc,argv); 
+	std::vector<std::string> switches = { "-a", "-ansi", "-unicode", "-utf8", "-utf16" };
+	auto reader = ParaReader::FromStringWithSwitches(argc, argv, switches);
 
 	auto stream = std::ifstream(argv[1], std::ios::binary | std::ios::ate);
 	auto pos = stream.tellg();
@@ -127,11 +121,14 @@ int main(int argc, char* argv[])
 
 	PrintBytes(&stream, start, end);
 	std::cout << std::endl;
-	PrintAsAscii(&stream, start, end);
-	//std::cout << std::endl;
-	//PrintAsWideChar(&stream, start, end);
-	//std::cout << std::endl;
-	//PrintAsUnicode(&stream, start, end);
+
+	if(reader.HasFlag("-a") || reader.HasFlag("-ansi"))
+		PrintAsAscii(&stream, start, end);
+	if (reader.HasFlag("-unicode"))
+	{
+		std::cout << std::endl;
+		PrintAsWideChar(&stream, start, end);
+	}
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
